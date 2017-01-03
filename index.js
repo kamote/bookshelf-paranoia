@@ -13,7 +13,7 @@ let merge = require('lodash.merge')
 module.exports = (bookshelf, settings) => {
   // Add default settings
   settings = merge({
-    field: 'deleted_at',
+    field: 'is_deleted',
     events: {
       destroying: true,
       updating: false,
@@ -38,7 +38,7 @@ module.exports = (bookshelf, settings) => {
       let softDelete = this.model ? this.model.prototype.softDelete : this.softDelete
 
       if (softDelete === true && options.withDeleted !== true) {
-        options.query.whereNull(`${result(this, 'tableName')}.${settings.field}`)
+        options.query.where(`${result(this, 'tableName')}.${settings.field}`, 0)
       }
     }
   }
@@ -86,7 +86,7 @@ module.exports = (bookshelf, settings) => {
         })
 
         // Attributes to be passed to events
-        let attrs = { [settings.field]: new Date() }
+        let attrs = { [settings.field]: 1 }
 
         return Promise.resolve()
         .then(() => {
